@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 import streamlit as st
 
 # Lectura del DataFrame
-df = pd.read_csv('../Final FBRef 2023-2024.csv')
+df = pd.read_csv('Final FBRef 2023-2024.csv')
 
 # Definir las ligas disponibles
 ligas_disponibles = ['Premier League', 'La Liga', 'Serie A', 'Bundesliga', 'Ligue 1']
