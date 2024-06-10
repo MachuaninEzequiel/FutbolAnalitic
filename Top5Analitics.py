@@ -19,113 +19,93 @@ st.sidebar.markdown("<h1 style='text-align: center; font-size: 36px;'>Análisis 
 liga_seleccionada = st.sidebar.selectbox('Selecciona la liga', ligas_disponibles)
 
 # Filtrar los datos según la liga seleccionada
-mediocampistas = df[(df['Pos'].str.contains('MF') == True) & (df['Min'] > 840) & (df['Comp'].str.contains(liga_seleccionada) == True)].reset_index(drop=True)
+mediocampistas = df[(df['Pos'].str.contains('MF') == True) & (df['Min'] > 1400) & (df['Comp'].str.contains(liga_seleccionada) == True)].reset_index(drop=True)
 
 lista_valores = [
-    'Player',
-    'Squad',
-    'TklPer90',
-    'TklWinPossPer90',
-    'Mid3rdTklPer90',
-    'Def3rdTklPer90',
-    'Att3rdTklPer90',
-    'DrbTklPer90',
-    'DrbPastAttPer90',
-    'DrbTkl%Per90',
-    'DrbPastPer90',
-    'BlocksPer90',
-    'ShBlocksPer90',
-    'PassBlocksPer90',
-    'IntPer90',
-    'Tkl+IntPer90',
-    'ClrPer90',
-    'ErrPer90',
-    'RecovPer90',
-    'pAdjShBlocksPer90',
-    'pAdjPassBlocksPer90',
-    'pAdjIntPer90',
-    'pAdjDrbTklPer90',
-    'pAdjTklWinPossPer90',
-    'pAdjDrbPastPer90',
-    'pAdjAerialWinsPer90',
-    'pAdjAerialLossPer90',
+    'Player','Squad','Shots', 'SoT', 'SoT%', 'Sh/90', 'SoT/90', 'G/Sh', 'G/SoT', 'AvgShotDistance', 'FKShots', 'PK', 'PKsAtt',
+    'PassesCompleted', 'PassesAttempted', 'TotCmp%', 'TotalPassDist', 'ProgPassDist', 'ShortPassCmp', 'ShortPassAtt', 'ShortPassCmp%',
+    'MedPassCmp', 'MedPassAtt', 'MedPassCmp%', 'LongPassCmp', 'LongPassAtt', 'LongPassCmp%', 'Assists', 'xAG', 'xA', 'A-xAG', 'KeyPasses',
+    'Final1/3Cmp', 'PenAreaCmp', 'CrsPenAreaCmp', 'ProgPasses', 'LivePass', 'DeadPass', 'FKPasses', 'ThruBalls', 'Switches', 'Crs',
+    'ThrowIn', 'CK', 'InSwingCK', 'OutSwingCK', 'StrCK', 'Cmpxxx', 'PassesToOff', 'PassesBlocked', 'SCA', 'SCA90', 'SCAPassLive', 'SCAPassDead',
+    'SCADrib', 'SCASh', 'SCAFld', 'SCADef', 'GCA', 'GCA90', 'GCAPassLive', 'GCAPassDead', 'GCADrib', 'GCASh', 'GCAFld', 'GCADef', 'Tkl',
+    'TklWinPoss', 'Def3rdTkl', 'Mid3rdTkl', 'Att3rdTkl', 'DrbTkl', 'DrbPastAtt', 'DrbTkl%', 'DrbPast', 'Blocks', 'ShBlocks', 'PassBlocks',
+    'Int', 'Tkl+Int', 'Clr', 'Err', 'Fls', 'Recov', 'AerialWins', 'AerialLoss', 'AerialWin%', 'Touches', 'DefPenTouch', 'Def3rdTouch',
+    'Mid3rdTouch', 'Att3rdTouch', 'AttPenTouch', 'LiveTouch', 'AttDrb', 'SuccDrb', 'DrbSucc%', 'TimesTackled', 'TimesTackled%', 'Carries',
+    'TotalCarryDistance', 'ProgCarryDistance', 'ProgCarries', 'CarriesToFinalThird', 'CarriesToPenArea', 'CarryMistakes', 'Disposesed',
+    'ReceivedPass', 'ProgPassesRec'
 ]
 
-# Grupo 1 de columnas para el primer total
-grupo_1 = [
-    'TklPer90',
-    'TklWinPossPer90',
-    'Def3rdTklPer90',
-    'Mid3rdTklPer90',
-    'Att3rdTklPer90',
-    'DrbTklPer90',
-    'DrbPastAttPer90',
-    'DrbTkl%Per90',
-    'DrbPastPer90',
-    'BlocksPer90',
-    'ShBlocksPer90',
-    'PassBlocksPer90',
-    'IntPer90',
-    'Tkl+IntPer90',
-    'ClrPer90',
-    'ErrPer90',
-    'RecovPer90'
+# Grupos de estadísticas
+grupo_shots = [
+    'Shots', 'SoT', 'SoT%', 'Sh/90', 'SoT/90', 'G/Sh', 'G/SoT', 'AvgShotDistance', 'FKShots', 'PK', 'PKsAtt'
 ]
 
-# Grupo 2 de columnas para el segundo total
-grupo_2 = [
-    'pAdjShBlocksPer90',
-    'pAdjPassBlocksPer90',
-    'pAdjIntPer90',
-    'pAdjDrbTklPer90',
-    'pAdjTklWinPossPer90',
-    'pAdjDrbPastPer90',
-    'pAdjAerialWinsPer90',
-    'pAdjAerialLossPer90'
+grupo_pases = [
+    'PassesCompleted', 'PassesAttempted', 'TotCmp%', 'TotalPassDist', 'ProgPassDist', 'ShortPassCmp', 'ShortPassAtt',
+    'ShortPassCmp%', 'MedPassCmp', 'MedPassAtt', 'MedPassCmp%', 'LongPassCmp', 'LongPassAtt', 'LongPassCmp%', 'Assists',
+    'xAG', 'xA', 'A-xAG', 'KeyPasses', 'Final1/3Cmp', 'PenAreaCmp', 'CrsPenAreaCmp', 'ProgPasses'
 ]
+
+grupo_tipos_de_pases = [
+    'LivePass', 'DeadPass', 'FKPasses', 'ThruBalls', 'Switches', 'Crs', 'ThrowIn', 'CK', 'InSwingCK', 'OutSwingCK',
+    'StrCK', 'Cmpxxx', 'PassesToOff', 'PassesBlocked'
+]
+
+grupo_creacion_de_goles_tiros = [
+    'SCA', 'SCA90', 'SCAPassLive', 'SCAPassDead', 'SCADrib', 'SCASh', 'SCAFld', 'SCADef', 'GCA', 'GCA90', 'GCAPassLive',
+    'GCAPassDead', 'GCADrib', 'GCASh', 'GCAFld', 'GCADef'
+]
+
+grupo_acciones_defensivas = [
+    'Tkl', 'TklWinPoss', 'Def3rdTkl', 'Mid3rdTkl', 'Att3rdTkl', 'DrbTkl', 'DrbPastAtt', 'DrbTkl%', 'DrbPast', 'Blocks',
+    'ShBlocks', 'PassBlocks', 'Int', 'Tkl+Int', 'Clr', 'Err'
+]
+
+grupo_rendimiento = [
+    'Fls', 'Recov', 'AerialWins', 'AerialLoss', 'AerialWin%'
+]
+
+grupo_posesion = [
+    'Touches', 'DefPenTouch', 'Def3rdTouch', 'Mid3rdTouch', 'Att3rdTouch', 'AttPenTouch', 'LiveTouch', 'AttDrb',
+    'SuccDrb', 'DrbSucc%', 'TimesTackled', 'TimesTackled%', 'Carries', 'TotalCarryDistance', 'ProgCarryDistance',
+    'ProgCarries', 'CarriesToFinalThird', 'CarriesToPenArea', 'CarryMistakes', 'Disposesed', 'ReceivedPass',
+    'ProgPassesRec'
+]
+
+grupos = {
+    'Shots': grupo_shots,
+    'Pases': grupo_pases,
+    'Tipos de Pases': grupo_tipos_de_pases,
+    'Creación de Goles/Tiros': grupo_creacion_de_goles_tiros,
+    'Acciones Defensivas': grupo_acciones_defensivas,
+    'Rendimiento': grupo_rendimiento,
+    'Posesión': grupo_posesion
+}
 
 mediosdef = mediocampistas[lista_valores].reset_index(drop=True).fillna(0)
 jugadores = list(mediosdef.Player.unique())
 
-# DataFrame para grupo 1
-df_grupo_1 = pd.DataFrame(columns=['Nombre', 'Equipo'] + grupo_1)
-
-# DataFrame para grupo 2
-df_grupo_2 = pd.DataFrame(columns=['Nombre', 'Equipo'] + grupo_2)
+# Crear DataFrames para cada grupo
+dfs_grupos = {}
+for nombre_grupo, grupo in grupos.items():
+    dfs_grupos[nombre_grupo] = pd.DataFrame(columns=['Nombre', 'Equipo'] + grupo)
 
 for jugador in jugadores:
     player = mediosdef.loc[mediosdef['Player'] == jugador].reset_index()
     equipo = player.loc[0, 'Squad']  # Obtener el nombre del equipo
 
-    # Calcular percentiles para el grupo 1
-    player_values_grupo_1 = player.loc[0, grupo_1].values  # Obtener los valores de los parámetros del grupo 1
-    percentiles_grupo_1 = []
-    for x in range(len(grupo_1)):
-        percentile = math.floor(stats.percentileofscore(mediosdef[grupo_1[x]], player_values_grupo_1[x]))
-        percentiles_grupo_1.append(percentile)
-    diccionario_grupo_1 = {'Nombre': jugador, 'Equipo': equipo}
-    diccionario_grupo_1.update({grupo_1[i]: percentiles_grupo_1[i] for i in range(len(grupo_1))})
-    df1 = pd.DataFrame([diccionario_grupo_1])
-    df_grupo_1 = pd.concat([df_grupo_1, df1], ignore_index=True)
-
-    # Calcular percentiles para el grupo 2
-    player_values_grupo_2 = player.loc[0, grupo_2].values  # Obtener los valores de los parámetros del grupo 2
-    percentiles_grupo_2 = []
-    for x in range(len(grupo_2)):
-        percentile = math.floor(stats.percentileofscore(mediosdef[grupo_2[x]], player_values_grupo_2[x]))
-        percentiles_grupo_2.append(percentile)
-    diccionario_grupo_2 = {'Nombre': jugador, 'Equipo': equipo}
-    diccionario_grupo_2.update({grupo_2[i]: percentiles_grupo_2[i] for i in range(len(grupo_2))})
-    df2 = pd.DataFrame([diccionario_grupo_2])
-    df_grupo_2 = pd.concat([df_grupo_2, df2], ignore_index=True)
+    for nombre_grupo, grupo in grupos.items():
+        player_values = player.loc[0, grupo].values  # Obtener los valores de los parámetros del grupo
+        percentiles = [math.floor(stats.percentileofscore(mediosdef[stat], value)) for stat, value in zip(grupo, player_values)]
+        diccionario = {'Nombre': jugador, 'Equipo': equipo}
+        diccionario.update({grupo[i]: percentiles[i] for i in range(len(grupo))})
+        df_temp = pd.DataFrame([diccionario])
+        dfs_grupos[nombre_grupo] = pd.concat([dfs_grupos[nombre_grupo], df_temp], ignore_index=True)
 
 # Cálculo de las puntuaciones totales
-df_grupo_1['Puntuacion_Total_Grupo_1'] = df_grupo_1[grupo_1].sum(axis=1)
-df_grupo_2['Puntuacion_Total_Grupo_2'] = df_grupo_2[grupo_2].sum(axis=1)
-
-# Ordenar los DataFrames basados en las puntuaciones totales
-df_grupo_1 = df_grupo_1.sort_values(by='Puntuacion_Total_Grupo_1', ascending=False).reset_index(drop=True)
-df_grupo_2 = df_grupo_2.sort_values(by='Puntuacion_Total_Grupo_2', ascending=False).reset_index(drop=True)
+for nombre_grupo, df in dfs_grupos.items():
+    df[f'Puntuacion_Total_{nombre_grupo}'] = df[grupos[nombre_grupo]].sum(axis=1)
+    dfs_grupos[nombre_grupo] = df.sort_values(by=f'Puntuacion_Total_{nombre_grupo}', ascending=False).reset_index(drop=True)
 
 def calcular_area_poligono(angulos, valores):
     # Convertir los ángulos y valores a coordenadas cartesianas
@@ -138,15 +118,19 @@ def calcular_area_poligono(angulos, valores):
     return area
 
 # Función para crear el gráfico de radar
-def crear_radar_modificado(df, grupo, nombre_grupo, jugador_seleccionado):
+def crear_radar_modificado(df1, df2, grupo, nombre_grupo, jugador1_seleccionado, jugador2_seleccionado):
     categorias = grupo
     N = len(categorias)
-    etiquetas_personalizadas = [f'{i+1}º' for i in range(N)]
-
-    valores = df[categorias].values.flatten().tolist()
-    valores += valores[:1]
-
-    # Calcula los ángulos de los ejes del radar
+    
+    # Valores del primer jugador
+    valores1 = df1[grupo].values.flatten().tolist()
+    valores1 += valores1[:1]
+    
+    # Valores del segundo jugador
+    valores2 = df2[grupo].values.flatten().tolist()
+    valores2 += valores2[:1]
+    
+    # Calcular los ángulos de los ejes del radar
     angulos = [n / float(N) * 2 * np.pi for n in range(N)]
     angulos += angulos[:1]
 
@@ -154,38 +138,45 @@ def crear_radar_modificado(df, grupo, nombre_grupo, jugador_seleccionado):
     fig, ax = plt.subplots(figsize=(12, 8), subplot_kw=dict(polar=True))
 
     # Dibuja los ejes con las etiquetas
-    ax.plot(angulos, valores, linewidth=1, linestyle='solid')
-    ax.fill(angulos, valores, 'b', alpha=0.2)
-    ax.set_xticks(angulos[:-1])
-    ax.set_xticklabels(etiquetas_personalizadas)
-    ax.set_title(f'Gráfico de Radar - {nombre_grupo} - {jugador_seleccionado}')
+    ax.plot(angulos, valores1, linewidth=1, linestyle='solid', label=jugador1_seleccionado)
+    ax.fill(angulos, valores1, 'b', alpha=0.2)
+
+    ax.plot(angulos, valores2, linewidth=1, linestyle='solid', label=jugador2_seleccionado, color='r')
+    ax.fill(angulos, valores2, 'r', alpha=0.2)
     
-    # Calcular el área del polígono
-    area_poligono = calcular_area_poligono(angulos, valores)
+    ax.set_xticks(angulos[:-1])
+    ax.set_xticklabels(categorias)
+    ax.set_title(f'Gráfico de Radar - {nombre_grupo}')
+    
+    # Calcular el área del polígono para cada jugador
+    area_poligono1 = calcular_area_poligono(angulos, valores1)
+    area_poligono2 = calcular_area_poligono(angulos, valores2)
+    
+    # Añadir la leyenda
+    ax.legend(loc='upper right', bbox_to_anchor=(1.1, 1.1))
+    
+    # Retornar la figura y el área del polígono para ambos jugadores
+    return fig, area_poligono1, area_poligono2
 
-    # Retornar la figura y el área del polígono
-    return fig, area_poligono
-
-# Selección de grupo y jugador en el sidebar
-grupo_seleccionado = st.sidebar.selectbox('Selecciona el grupo', ['Grupo 1', 'Grupo 2'])
-jugador_seleccionado = st.sidebar.selectbox('Selecciona el jugador', jugadores)
+# Selección de grupo y jugadores en el sidebar
+grupo_seleccionado = st.sidebar.selectbox('Selecciona el grupo', list(grupos.keys()))
+jugador1_seleccionado = st.sidebar.selectbox('Selecciona el primer jugador', jugadores)
+jugador2_seleccionado = st.sidebar.selectbox('Selecciona el segundo jugador', jugadores)
 
 # Mostrar el gráfico en la parte principal
-if grupo_seleccionado == 'Grupo 1':
-    df_jugador = df_grupo_1[df_grupo_1['Nombre'] == jugador_seleccionado]
-    fig, area_poligono = crear_radar_modificado(df_jugador, grupo_1, 'Grupo 1', jugador_seleccionado)
-else:
-    df_jugador = df_grupo_2[df_grupo_2['Nombre'] == jugador_seleccionado]
-    fig, area_poligono = crear_radar_modificado(df_jugador, grupo_2, 'Grupo 2', jugador_seleccionado)
+df_jugador1 = dfs_grupos[grupo_seleccionado][dfs_grupos[grupo_seleccionado]['Nombre'] == jugador1_seleccionado]
+df_jugador2 = dfs_grupos[grupo_seleccionado][dfs_grupos[grupo_seleccionado]['Nombre'] == jugador2_seleccionado]
+
+fig, area_poligono1, area_poligono2 = crear_radar_modificado(df_jugador1, df_jugador2, grupos[grupo_seleccionado], grupo_seleccionado, jugador1_seleccionado, jugador2_seleccionado)
 
 # Mostrar la figura en la parte principal
 st.pyplot(fig)
-st.write(f"Área del polígono: {area_poligono:.2f}")
+st.write(f"Área del polígono de {jugador1_seleccionado}: {area_poligono1:.2f}")
+st.write(f"Área del polígono de {jugador2_seleccionado}: {area_poligono2:.2f}")
 
-# Botón para mostrar estadísticas
-with st.expander('Estadísticas del Jugador'):
-    if grupo_seleccionado == 'Grupo 1':
-        df_jugador = df_grupo_1[df_grupo_1['Nombre'] == jugador_seleccionado]
-    else:
-        df_jugador = df_grupo_2[df_grupo_2['Nombre'] == jugador_seleccionado]
-    st.table(df_jugador)
+# Botón para mostrar estadísticas de ambos jugadores
+with st.expander('Estadísticas del Primer Jugador'):
+    st.table(df_jugador1)
+    
+with st.expander('Estadísticas del Segundo Jugador'):
+    st.table(df_jugador2)
