@@ -117,11 +117,17 @@ def calcular_area_poligono(angulos, valores):
 
     return area
 
-# Función para crear el gráfico de radar
-def crear_radar_modificado(df1, df2, grupo, nombre_grupo):
+def crear_radar_modificado(df1, df2, grupo, nombre_grupo, jugador1, jugador2):
     categorias = grupo
     N = len(categorias)
     
+
+    # Obtener el apellido del primer jugador
+    apellido_jugador1 = jugador1.split()[1] if len(jugador1.split()) > 1 else jugador1
+    
+    # Obtener el apellido del segundo jugador
+    apellido_jugador2 = jugador2.split()[1] if len(jugador2.split()) > 1 else jugador2
+
     # Valores del primer jugador
     valores1 = df1[grupo].values.flatten().tolist()
     valores1 += valores1[:1]
@@ -138,10 +144,10 @@ def crear_radar_modificado(df1, df2, grupo, nombre_grupo):
     fig, ax = plt.subplots(figsize=(12, 8), subplot_kw=dict(polar=True))
 
     # Dibuja los ejes con las etiquetas
-    ax.plot(angulos, valores1, linewidth=1, linestyle='solid', label="Jugador 1")
+    ax.plot(angulos, valores1, linewidth=1, linestyle='solid', label=f"{apellido_jugador1}")
     ax.fill(angulos, valores1, 'b', alpha=0.2)
 
-    ax.plot(angulos, valores2, linewidth=1, linestyle='solid', label="Jugador 2", color='r')
+    ax.plot(angulos, valores2, linewidth=1, linestyle='solid', label=f"{apellido_jugador2}", color='r')
     ax.fill(angulos, valores2, 'r', alpha=0.2)
     
     ax.set_xticks(angulos[:-1])
@@ -181,7 +187,7 @@ df_jugador1 = dfs_grupos[grupo_seleccionado][dfs_grupos[grupo_seleccionado]['Nom
 df_jugador2 = dfs_grupos[grupo_seleccionado][dfs_grupos[grupo_seleccionado]['Nombre'] == jugador2]
 
 # Crear el gráfico de radar comparativo para los jugadores seleccionados
-fig, area_poligono1, area_poligono2  = crear_radar_modificado(df_jugador1, df_jugador2, grupos[grupo_seleccionado], grupo_seleccionado)
+fig, area_poligono1, area_poligono2  = crear_radar_modificado(df_jugador1, df_jugador2, grupos[grupo_seleccionado], grupo_seleccionado, jugador1, jugador2)
 
 # CSS personalizado para centrar el texto y aumentar el tamaño de la fuente
 st.markdown("""
