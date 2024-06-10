@@ -19,7 +19,7 @@ st.sidebar.markdown("<h1 style='text-align: center; font-size: 36px;'>Análisis 
 liga_seleccionada = st.sidebar.selectbox('Selecciona la liga', ligas_disponibles)
 
 # Filtrar los datos según la liga seleccionada
-mediocampistas = df[(df['Pos'].str.contains('MF') == True) & (df['Min'] > 1400) & (df['Comp'].str.contains(liga_seleccionada) == True)].reset_index(drop=True)
+mediocampistas = df[(df['Pos'].str.contains('GK') != True) & (df['Min'] > 1400) & (df['Comp'].str.contains(liga_seleccionada) == True)].reset_index(drop=True)
 
 lista_valores = [
     'Player','Squad','Shots', 'SoT', 'SoT%', 'Sh/90', 'SoT/90', 'G/Sh', 'G/SoT', 'AvgShotDistance', 'FKShots', 'PK', 'PKsAtt',
