@@ -7,19 +7,19 @@ import matplotlib.pyplot as plt
 import streamlit as st
 
 # Lectura del DataFrame
-df = pd.read_csv('Final FBRef 2023-2024.csv')
+df = pd.read_csv('../Final FBRef 2023-2024.csv')
 
 # Definir las ligas disponibles
 ligas_disponibles = ['Premier League', 'La Liga', 'Serie A', 'Bundesliga', 'Ligue 1']
 
 # Interfaz de Streamlit con sidebar
-st.sidebar.markdown("<h1 style='text-align: center; font-size: 36px;'>Análisis de Mediocampistas</h1>", unsafe_allow_html=True)
+st.sidebar.markdown("<h1 style='text-align: center; font-size: 36px;'>Estadísticas\n Ligas Europeas</h1>", unsafe_allow_html=True)
 
 # Selección de la liga en el sidebar
 liga_seleccionada = st.sidebar.selectbox('Selecciona la liga', ligas_disponibles)
 
 # Filtrar los datos según la liga seleccionada
-mediocampistas = df[(df['Pos'].str.contains('GK') != True) & (df['Min'] > 1400) & (df['Comp'].str.contains(liga_seleccionada) == True)].reset_index(drop=True)
+mediocampistas = df[(df['Pos'].str.contains('GK') != True) & (df['Min'] > 1400) & (df['Comp'].str.contains(liga_seleccionada) == True) & (df['Starts'] > 10)].reset_index(drop=True)
 
 lista_valores = [
     'Player','Squad','Shots', 'SoT', 'SoT%', 'Sh/90', 'SoT/90', 'G/Sh', 'G/SoT', 'AvgShotDistance', 'FKShots', 'PK', 'PKsAtt',
@@ -118,7 +118,7 @@ def calcular_area_poligono(angulos, valores):
     return area
 
 # Función para crear el gráfico de radar
-def crear_radar_modificado(df1, df2, grupo, nombre_grupo, jugador1_seleccionado, jugador2_seleccionado):
+def crear_radar_modificado(df1, df2, grupo, nombre_grupo):
     categorias = grupo
     N = len(categorias)
     
@@ -138,10 +138,10 @@ def crear_radar_modificado(df1, df2, grupo, nombre_grupo, jugador1_seleccionado,
     fig, ax = plt.subplots(figsize=(12, 8), subplot_kw=dict(polar=True))
 
     # Dibuja los ejes con las etiquetas
-    ax.plot(angulos, valores1, linewidth=1, linestyle='solid', label=jugador1_seleccionado)
+    ax.plot(angulos, valores1, linewidth=1, linestyle='solid', label="Jugador 1")
     ax.fill(angulos, valores1, 'b', alpha=0.2)
 
-    ax.plot(angulos, valores2, linewidth=1, linestyle='solid', label=jugador2_seleccionado, color='r')
+    ax.plot(angulos, valores2, linewidth=1, linestyle='solid', label="Jugador 2", color='r')
     ax.fill(angulos, valores2, 'r', alpha=0.2)
     
     ax.set_xticks(angulos[:-1])
@@ -155,28 +155,77 @@ def crear_radar_modificado(df1, df2, grupo, nombre_grupo, jugador1_seleccionado,
     # Añadir la leyenda
     ax.legend(loc='upper right', bbox_to_anchor=(1.1, 1.1))
     
+    
+    
     # Retornar la figura y el área del polígono para ambos jugadores
     return fig, area_poligono1, area_poligono2
 
-# Selección de grupo y jugadores en el sidebar
-grupo_seleccionado = st.sidebar.selectbox('Selecciona el grupo', list(grupos.keys()))
-jugador1_seleccionado = st.sidebar.selectbox('Selecciona el primer jugador', jugadores)
-jugador2_seleccionado = st.sidebar.selectbox('Selecciona el segundo jugador', jugadores)
 
-# Mostrar el gráfico en la parte principal
-df_jugador1 = dfs_grupos[grupo_seleccionado][dfs_grupos[grupo_seleccionado]['Nombre'] == jugador1_seleccionado]
-df_jugador2 = dfs_grupos[grupo_seleccionado][dfs_grupos[grupo_seleccionado]['Nombre'] == jugador2_seleccionado]
 
-fig, area_poligono1, area_poligono2 = crear_radar_modificado(df_jugador1, df_jugador2, grupos[grupo_seleccionado], grupo_seleccionado, jugador1_seleccionado, jugador2_seleccionado)
 
-# Mostrar la figura en la parte principal
+# Selección del grupo estadístico
+grupo_seleccionado = st.sidebar.selectbox('Selecciona el grupo estadístico', list(grupos.keys()))
+
+# Filtrado de jugadores por equipo
+equipos_disponibles = sorted(mediocampistas['Squad'].unique())
+equipo_seleccionado1 = st.sidebar.selectbox('Selecciona el equipo del Jugador 1', equipos_disponibles)
+jugadores_equipo1 = sorted(mediocampistas[mediocampistas['Squad'] == equipo_seleccionado1]['Player'].unique())
+jugador1 = st.sidebar.selectbox('Selecciona el Jugador 1', jugadores_equipo1)
+
+equipo_seleccionado2 = st.sidebar.selectbox('Selecciona el equipo del Jugador 2', equipos_disponibles)
+jugadores_equipo2 = sorted(mediocampistas[mediocampistas['Squad'] == equipo_seleccionado2]['Player'].unique())
+jugador2 = st.sidebar.selectbox('Selecciona el Jugador 2', jugadores_equipo2)
+
+# Obtener los datos del jugador 1 y 2
+df_jugador1 = dfs_grupos[grupo_seleccionado][dfs_grupos[grupo_seleccionado]['Nombre'] == jugador1]
+df_jugador2 = dfs_grupos[grupo_seleccionado][dfs_grupos[grupo_seleccionado]['Nombre'] == jugador2]
+
+# Crear el gráfico de radar comparativo para los jugadores seleccionados
+fig, area_poligono1, area_poligono2  = crear_radar_modificado(df_jugador1, df_jugador2, grupos[grupo_seleccionado], grupo_seleccionado)
+
+# CSS personalizado para centrar el texto y aumentar el tamaño de la fuente
+st.markdown("""
+    <style>
+    .center-text {
+        text-align: center;
+    }
+    .dataframe tbody td {
+        text-align: center;
+        font-size: 16px; /* Aumenta el tamaño de la fuente en las celdas del cuerpo de la tabla */
+    }
+    .dataframe thead th {
+        text-align: center;
+        font-size: 18px; /* Aumenta el tamaño de la fuente en las celdas de la cabecera de la tabla */
+    }
+    </style>
+""", unsafe_allow_html=True)
+
+# Mostrar el gráfico
 st.pyplot(fig)
-st.write(f"Área del polígono de {jugador1_seleccionado}: {area_poligono1:.2f}")
-st.write(f"Área del polígono de {jugador2_seleccionado}: {area_poligono2:.2f}")
 
-# Botón para mostrar estadísticas de ambos jugadores
-with st.expander('Estadísticas del Primer Jugador'):
-    st.table(df_jugador1)
-    
-with st.expander('Estadísticas del Segundo Jugador'):
-    st.table(df_jugador2)
+
+
+st.write(f"<div class='center-text' style='font-size: 25px;' >Área del polígono de {jugador1}: {area_poligono1:.2f}</div>", unsafe_allow_html=True)
+st.write(f"<div class='center-text'>(Posición {df_jugador1.index[0] + 1}º)</div>", unsafe_allow_html=True)
+
+st.write(f"<div class='center-text' style='font-size: 25px;' >Área del polígono de {jugador2}: {area_poligono2:.2f}</div>", unsafe_allow_html=True)
+st.write(f"<div class='center-text'>(Posición {df_jugador2.index[0] + 1}º)</div>", unsafe_allow_html=True)
+
+
+#
+if jugador1 == jugador2:
+    st.warning("Por favor selecciona dos jugadores diferentes para comparar.")
+else:
+    # Crear DataFrame para la tabla comparativa
+    comparacion = pd.DataFrame(columns=['Estadística', jugador1, jugador2])
+    comparacion['Estadística'] = grupos[grupo_seleccionado]  # Usar las estadísticas del grupo seleccionado
+    comparacion[jugador1] = dfs_grupos[grupo_seleccionado].loc[dfs_grupos[grupo_seleccionado]['Nombre'] == jugador1, grupos[grupo_seleccionado]].values.flatten()
+    comparacion[jugador2] = dfs_grupos[grupo_seleccionado].loc[dfs_grupos[grupo_seleccionado]['Nombre'] == jugador2, grupos[grupo_seleccionado]].values.flatten()
+
+    # Mostrar estadísticas de ambos jugadores en un único expander, con formato vertical
+    with st.expander('Comparación de Estadísticas'):
+        st.dataframe(comparacion, height=450, width=700)
+
+# Mostrar la tabla con los jugadores y puntuaciones totales
+st.write(f"<div class='center-text' style='font-size: 34px;' >Puntuaciones Totales del Grupo {grupo_seleccionado}</div>", unsafe_allow_html=True)
+st.dataframe(dfs_grupos[grupo_seleccionado][['Nombre', 'Equipo', f'Puntuacion_Total_{grupo_seleccionado}']], height=450, width=900)
